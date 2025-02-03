@@ -4,7 +4,12 @@ import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config();
 
-export const register = async (req, res) => {
+export const register = router.get("/", getInventory);
+router.post("/", addInventory);
+router.put("/:id", updateInventory);
+router.delete("/:id", deleteInventory);
+
+async (req, res) => {
   try {
     const { username, email, password } = req.body;
     const user = new User({ username, email, password });
