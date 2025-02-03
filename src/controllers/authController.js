@@ -8,7 +8,7 @@ dotenv.config();
 
 const router = Router();
 
-router.post("/register", async (req, res) => {
+export const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
     const user = new User({ username, email, password });
@@ -17,9 +17,9 @@ router.post("/register", async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: "Error registering user" });
   }
-});
+};
 
-router.post("/login", async (req, res) => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
@@ -39,6 +39,9 @@ router.post("/login", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
-});
+};
+
+router.post("/register", register);
+router.post("/login", login);
 
 export default router;
