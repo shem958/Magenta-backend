@@ -1,15 +1,14 @@
-import User from "../models/User.js";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
 import dotenv from "dotenv";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import User from "../models/User"; // Adjust the path as necessary
+import { Router } from "express";
+
 dotenv.config();
 
-export const register = router.get("/", getInventory);
-router.post("/", addInventory);
-router.put("/:id", updateInventory);
-router.delete("/:id", deleteInventory);
+const router = Router();
 
-async (req, res) => {
+router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
     const user = new User({ username, email, password });
@@ -18,9 +17,9 @@ async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: "Error registering user" });
   }
-};
+});
 
-export const login = async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
@@ -40,4 +39,6 @@ export const login = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
-};
+});
+
+export default router;
