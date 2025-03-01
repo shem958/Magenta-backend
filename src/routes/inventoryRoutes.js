@@ -4,19 +4,14 @@ import {
   addInventory,
   updateInventory,
   deleteInventory,
-  restoreInventory,
 } from "../controllers/inventoryController.js";
-import { protect, authorize } from "../middleware/authMiddleware.js";
+import { authenticateUser, authorize } from "../middleware/authMiddleware.js"; // Import both functions
 
 const router = express.Router();
 
-// Public: View inventory
-router.get("/", protect, getInventory);
-
-// Restricted: Only admins/managers can modify inventory
-router.post("/", protect, authorize("admin", "manager"), addInventory);
-router.put("/:id", protect, authorize("admin", "manager"), updateInventory);
-router.delete("/:id", protect, authorize("admin", "manager"), deleteInventory);
-router.patch("/restore/:id", protect, authorize("admin"), restoreInventory);
+router.get("/", authenticateUser, getInventory);
+router.post("/", authenticateUser, authorize("admin"), addInventory); // Only admins can add inventory
+router.put("/:id", authenticateUser, authorize("admin"), updateInventory);
+router.delete("/:id", authenticateUser, authorize("admin"), deleteInventory);
 
 export default router;
