@@ -4,6 +4,7 @@ import employeesRoutes from "./employeesRoutes.js";
 import financeRoutes from "./financeRoutes.js";
 import inventoryRoutes from "./inventoryRoutes.js";
 import authRoutes from "./authRoutes.js";
+import notificationRoutes from "./notificationRoutes.js"; // Added notification routes
 
 const router = express.Router();
 
@@ -13,6 +14,7 @@ router.use("/deliveries", deliveriesRoutes);
 router.use("/employees", employeesRoutes);
 router.use("/finance", financeRoutes);
 router.use("/inventory", inventoryRoutes);
+router.use("/notifications", notificationRoutes); // Added notification routes
 
 // Fallback for undefined routes
 router.use("*", (req, res) => {
