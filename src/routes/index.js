@@ -7,7 +7,7 @@ import authRoutes from "./authRoutes.js";
 
 const router = express.Router();
 
-// Define API routes with '/api' prefix
+// Define API routes
 router.use("/auth", authRoutes);
 router.use("/deliveries", deliveriesRoutes);
 router.use("/employees", employeesRoutes);
