@@ -5,12 +5,15 @@ import {
   updateInventory,
   deleteInventory,
 } from "../controllers/inventoryController.js";
-import { authenticateUser, authorize } from "../middleware/authMiddleware.js"; // Import both functions
+import { authenticateUser, authorize } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
+// Public route: Get all inventory items
 router.get("/", authenticateUser, getInventory);
-router.post("/", authenticateUser, authorize("admin"), addInventory); // Only admins can add inventory
+
+// Protected routes: Only admins can modify inventory
+router.post("/", authenticateUser, authorize("admin"), addInventory);
 router.put("/:id", authenticateUser, authorize("admin"), updateInventory);
 router.delete("/:id", authenticateUser, authorize("admin"), deleteInventory);
 
