@@ -17,7 +17,23 @@ export const getInventory = async (req, res) => {
 // @route   POST /api/inventory
 export const addInventory = async (req, res) => {
   try {
-    const { name, quantity, location } = req.body;
+    const {
+      name,
+      category,
+      quantity,
+      minStockLevel,
+      price,
+      location,
+      supplier,
+    } = req.body;
+
+    // Validate required fields
+    if (!name || !category || !price || !location || !supplier?.name) {
+      return res.status(400).json({
+        message:
+          "Missing required fields: name, category, price, location, and supplier.name are required",
+      });
+    }
 
     // Check if item already exists
     const existingItem = await Inventory.findOne({ name });
@@ -27,8 +43,12 @@ export const addInventory = async (req, res) => {
 
     const newItem = new Inventory({
       name,
-      quantity,
+      category,
+      quantity: quantity || 0,
+      minStockLevel: minStockLevel || 10,
+      price,
       location,
+      supplier,
     });
 
     await newItem.save();
@@ -46,7 +66,15 @@ export const addInventory = async (req, res) => {
 // @route   PUT /api/inventory/:id
 export const updateInventory = async (req, res) => {
   try {
-    const { name, quantity, location } = req.body;
+    const {
+      name,
+      category,
+      quantity,
+      minStockLevel,
+      price,
+      location,
+      supplier,
+    } = req.body;
     const item = await Inventory.findById(req.params.id);
 
     if (!item || item.isDeleted) {
@@ -54,8 +82,15 @@ export const updateInventory = async (req, res) => {
     }
 
     item.name = name || item.name;
+    item.category = category || item.category;
     item.quantity = quantity !== undefined ? quantity : item.quantity;
+    item.minStockLevel =
+      minStockLevel !== undefined ? minStockLevel : item.minStockLevel;
+    item.price = price !== undefined ? price : item.price;
     item.location = location || item.location;
+    if (supplier) {
+      item.supplier = { ...item.supplier, ...supplier };
+    }
 
     await item.save();
     res
@@ -102,11 +137,9 @@ export const restoreInventory = async (req, res) => {
       .status(200)
       .json({ message: "Inventory item restored successfully", item });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Error restoring inventory item",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error restoring inventory item",
+      error: error.message,
+    });
   }
 };
