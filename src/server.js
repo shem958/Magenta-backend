@@ -17,7 +17,7 @@ const app = express();
 
 // Middleware
 app.use(express.json()); // Parse JSON bodies
-app.use(cors()); // Enable CORS
+app.use(cors({ origin: "http://localhost:3000", credentials: true })); // Enable CORS for frontend
 app.use(helmet()); // Security headers
 app.use(morgan("dev")); // Logging
 app.use(
@@ -25,7 +25,7 @@ app.use(
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100, // Limit each IP to 100 requests per windowMs
     message: "Too many requests from this IP, please try again later",
-  })
+  }),
 );
 
 // Routes

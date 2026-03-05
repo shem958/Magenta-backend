@@ -5,11 +5,18 @@ import Inventory from "../models/Inventory.js";
 export const getInventory = async (req, res) => {
   try {
     const items = await Inventory.find({ isDeleted: false });
-    res.status(200).json(items);
+    res.status(200).json({
+      success: true,
+      data: items,
+      message: "Inventory retrieved successfully",
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error retrieving inventory", error: error.message });
+    res.status(500).json({
+      success: false,
+      data: null,
+      message: "Error retrieving inventory",
+      error: error.message,
+    });
   }
 };
 
@@ -30,6 +37,8 @@ export const addInventory = async (req, res) => {
     // Validate required fields
     if (!name || !category || !price || !location || !supplier?.name) {
       return res.status(400).json({
+        success: false,
+        data: null,
         message:
           "Missing required fields: name, category, price, location, and supplier.name are required",
       });
@@ -38,7 +47,9 @@ export const addInventory = async (req, res) => {
     // Check if item already exists
     const existingItem = await Inventory.findOne({ name });
     if (existingItem) {
-      return res.status(400).json({ message: "Item already exists" });
+      return res
+        .status(400)
+        .json({ success: false, data: null, message: "Item already exists" });
     }
 
     const newItem = new Inventory({
@@ -52,13 +63,18 @@ export const addInventory = async (req, res) => {
     });
 
     await newItem.save();
-    res
-      .status(201)
-      .json({ message: "Inventory item added successfully", item: newItem });
+    res.status(201).json({
+      success: true,
+      data: newItem,
+      message: "Inventory item added successfully",
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error adding inventory item", error: error.message });
+    res.status(500).json({
+      success: false,
+      data: null,
+      message: "Error adding inventory item",
+      error: error.message,
+    });
   }
 };
 
@@ -78,7 +94,9 @@ export const updateInventory = async (req, res) => {
     const item = await Inventory.findById(req.params.id);
 
     if (!item || item.isDeleted) {
-      return res.status(404).json({ message: "Item not found" });
+      return res
+        .status(404)
+        .json({ success: false, data: null, message: "Item not found" });
     }
 
     item.name = name || item.name;
@@ -93,13 +111,18 @@ export const updateInventory = async (req, res) => {
     }
 
     await item.save();
-    res
-      .status(200)
-      .json({ message: "Inventory item updated successfully", item });
+    res.status(200).json({
+      success: true,
+      data: item,
+      message: "Inventory item updated successfully",
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error updating inventory item", error: error.message });
+    res.status(500).json({
+      success: false,
+      data: null,
+      message: "Error updating inventory item",
+      error: error.message,
+    });
   }
 };
 
@@ -109,16 +132,25 @@ export const deleteInventory = async (req, res) => {
   try {
     const item = await Inventory.findById(req.params.id);
     if (!item || item.isDeleted) {
-      return res.status(404).json({ message: "Item not found" });
+      return res
+        .status(404)
+        .json({ success: false, data: null, message: "Item not found" });
     }
 
     item.isDeleted = true;
     await item.save();
-    res.status(200).json({ message: "Inventory item deleted successfully" });
+    res.status(200).json({
+      success: true,
+      data: null,
+      message: "Inventory item deleted successfully",
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error deleting inventory item", error: error.message });
+    res.status(500).json({
+      success: false,
+      data: null,
+      message: "Error deleting inventory item",
+      error: error.message,
+    });
   }
 };
 
@@ -128,16 +160,26 @@ export const restoreInventory = async (req, res) => {
   try {
     const item = await Inventory.findById(req.params.id);
     if (!item || !item.isDeleted) {
-      return res.status(404).json({ message: "Item not found or not deleted" });
+      return res
+        .status(404)
+        .json({
+          success: false,
+          data: null,
+          message: "Item not found or not deleted",
+        });
     }
 
     item.isDeleted = false;
     await item.save();
-    res
-      .status(200)
-      .json({ message: "Inventory item restored successfully", item });
+    res.status(200).json({
+      success: true,
+      data: item,
+      message: "Inventory item restored successfully",
+    });
   } catch (error) {
     res.status(500).json({
+      success: false,
+      data: null,
       message: "Error restoring inventory item",
       error: error.message,
     });
